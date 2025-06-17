@@ -1,58 +1,132 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TechDrop - Tienda de Dropshipping Tecnológico</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .cart-count { top: -10px; right: -10px; font-size: 0.75rem; }
-    .product-card img { transition: transform 0.3s ease; }
-    .product-card img:hover { transform: scale(1.05); }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    nav {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+    }
+    nav .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1rem;
+    }
+    .hero {
+      background-color: #1e40af;
+      color: white;
+      padding: 4rem 1rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .products {
+      max-width: 1200px;
+      margin: 2rem auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .product-card {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .product-card img {
+      max-width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .product-card h3 {
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+    }
+    .product-card button {
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .product-card button:hover {
+      background-color: #1e40af;
+    }
+    footer {
+      background-color: #1e3a8a;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
   </style>
 </head>
-<body class="bg-gray-100 font-sans">
-  <!-- Navbar, Hero, Productos, Carrito, Footer, y JavaScript -->
-  <!-- Ver respuesta anterior para el código completo -->
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="container">
+      <a href="#" class="text-2xl font-bold">TechDrop</a>
+      <div>
+        <a href="#products">Productos</a>
+        <a href="#about">Sobre Nosotros</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>¡La Mejor Tecnología al Mejor Precio!</h1>
+    <p>Explora nuestra selección de productos tecnológicos de última generación.</p>
+    <a href="#products" style="background-color: white; color: #1e3a8a; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">Ver Productos</a>
+  </section>
+
+  <!-- Productos -->
+  <section id="products" class="products">
+    <h2 style="text-align: center; font-size: 2rem; margin-bottom: 1rem;">Nuestros Productos</h2>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300x300?text=Auriculares" alt="Auriculares Bluetooth">
+      <h3>Auriculares Bluetooth 5.0</h3>
+      <p>$29.99</p>
+      <button>Añadir al Carrito</button>
+    </div>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300x300?text=Smartwatch" alt="Smartwatch">
+      <h3>Smartwatch Deportivo</h3>
+      <p>$49.99</p>
+      <button>Añadir al Carrito</button>
+    </div>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300x300?text=Cámara" alt="Cámara WiFi">
+      <h3>Cámara de Seguridad WiFi</h3>
+      <p>$39.99</p>
+      <button>Añadir al Carrito</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 TechDrop. Todos los derechos reservados.</p>
+  </footer>
 </body>
 </html>
